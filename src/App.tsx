@@ -1,25 +1,92 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { useState, useEffect, CSSProperties } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import CircleLoader from "react-spinners/CircleLoader";
+import { deepOrange } from "@mui/material/colors";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Container from "@material-ui/core/Container";
+
+import { MainPage, Page404 } from "./pages";
+
+const override: CSSProperties = {
+  display: "block",
+  margin: "0 auto",
+  borderColor: "red",
+  backgroundColor: "#712B75",
+};
+
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#712B75",
+    },
+    secondary: {
+      main: "#F2F0EB",
+    },
+    error: {
+      main: deepOrange[500],
+    },
+  },
+  typography: {
+    fontFamily: ["Rubik", "sans-serif"].join(","),
+    h6: {
+      "@media (max-width: 600px)": {
+        fontSize: "1rem",
+      },
+      "@media (max-width: 375px)": {
+        fontSize: "0.7rem",
+      },
+    },
+    h3: {
+      "@media (max-width: 600px)": {
+        fontSize: "1.5rem",
+      },
+      "@media (max-width: 375px)": {
+        fontSize: "1rem",
+      },
+    },
+    h4: {
+      "@media (max-width: 600px)": {
+        fontSize: "1.125rem",
+      },
+      "@media (max-width: 375px)": {
+        fontSize: "0.85rem",
+      },
+    },
+  },
+});
 
 function App() {
+  const [starterPageLoading, setStarterPageLoading] = useState<boolean>(true);
+
+  const loader: JSX.Element = (
+    <CircleLoader
+      color="white"
+      cssOverride={override}
+      size={"100vh"}
+      aria-label="Loading Spinner"
+      data-testid="loader"
+    />
+  );
+
+  useEffect(() => {
+    const timer: ReturnType<typeof setTimeout> = setTimeout(() => {
+      setStarterPageLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container component="main" maxWidth="lg" disableGutters={true}>
+      <ThemeProvider theme={theme}>
+        <Router>
+          <Routes>
+            <Route path="/" element={<MainPage />} />
+            <Route path="*" element={<Page404 />} />
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </Container>
   );
 }
 
