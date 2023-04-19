@@ -35,7 +35,7 @@ type Mode = {
 
 export default function Form(props: IAppProps) {
   const theme = useTheme();
-  const matches: boolean = useMediaQuery<string | undefined>(
+  const matchesMobileResolution: boolean = useMediaQuery<string | undefined>(
     theme.breakpoints.up("sm")
   );
   const {
@@ -49,7 +49,6 @@ export default function Form(props: IAppProps) {
     resolver: yupResolver(schema),
   });
   const handleFormSubmit: SubmitHandler<FormData | Mode> = (values) => {
-    console.log(values);
     reset({
       city: "",
     });
@@ -67,7 +66,7 @@ export default function Form(props: IAppProps) {
         htmlFor="outlined-adornment-search"
         sx={{
           top: -7,
-          color: matches
+          color: matchesMobileResolution
             ? theme.palette.primary.main
             : theme.palette.secondary.main,
         }}
@@ -82,7 +81,7 @@ export default function Form(props: IAppProps) {
         sx={{
           borderRadius: 18,
           border: "none",
-          background: matches
+          background: matchesMobileResolution
             ? "linear-gradient(45deg, rgba(242, 251, 255, 0.1) 0%, #F2F0EB 100%)"
             : "linear-gradient(0deg, rgba(242, 251, 255, 0.1) -60%, #F2F0EB 100%)",
           "&.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
@@ -116,7 +115,7 @@ export default function Form(props: IAppProps) {
           textAlign: "center",
           height: 2,
           marginTop: 1,
-          color: matches ? theme.palette.error.light : theme.palette.error.main,
+          color: matchesMobileResolution ? theme.palette.error.light : theme.palette.error.main,
         }}
       >
         {errors?.city && errors?.city?.message}
