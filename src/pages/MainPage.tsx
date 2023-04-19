@@ -1,27 +1,17 @@
 import * as React from "react";
-import {
-  Box,
-  Stack,
-  Typography,
-  InputAdornment,
-  FormControl,
-  InputLabel,
-  OutlinedInput,
-  Button,
-  useMediaQuery,
-} from "@mui/material";
+import { Box, Stack, Typography, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
 import WbCloudyIcon from "@mui/icons-material/WbCloudy";
 import AcUnitIcon from "@mui/icons-material/AcUnit";
-import SearchIcon from "@mui/icons-material/Search";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel } from "swiper";
 import sunny from "../assets/sunny.svg";
 import rainySmall from "../assets/rainy-small.svg";
 import { ForecastDataPerDay } from "../interfaces";
 import MobileView from "./MobileView";
+import Form from "../components/Form";
 
 import "swiper/css";
 import "./MainPage.css";
@@ -160,7 +150,7 @@ export default function MainPage(props: IAppProps) {
           paddingRight: matches ? 2 : 0,
           display: "flex",
           flexDirection: "column",
-          justifyContent: "space-between",
+          justifyContent: "space-around",
         }}
       >
         <Stack
@@ -172,53 +162,7 @@ export default function MainPage(props: IAppProps) {
             height: "15%",
           }}
         >
-          <FormControl
-            variant="outlined"
-            sx={{
-              width: { lg: "40%", xl: "40%", md: "50%", sm: "50%", xs: "80%" },
-            }}
-          >
-            <InputLabel
-              htmlFor="outlined-adornment-search"
-              sx={{ top: -7, color: theme.palette.primary.main }}
-            >
-              Search
-            </InputLabel>
-            <OutlinedInput
-              id="outlined-adornment-search"
-              size="small"
-              sx={{
-                borderRadius: 18,
-                border: "none",
-                background: matches
-                  ? "linear-gradient(45deg, rgba(242, 251, 255, 0.1) 0%, #F2F0EB 100%)"
-                  : "linear-gradient(0deg, rgba(242, 251, 255, 0.1) -60%, #F2F0EB 100%)",
-                "&.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-                  borderColor: "transparent",
-                },
-                "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline":
-                  {
-                    borderColor: "white",
-                  },
-                "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-                  {
-                    border: "none",
-                  },
-              }}
-              endAdornment={
-                <InputAdornment position="end">
-                  <SearchIcon
-                    sx={{
-                      cursor: "pointer",
-                      color: theme.palette.primary.main,
-                    }}
-                    onClick={() => console.log("click")}
-                  />
-                </InputAdornment>
-              }
-              label="Search"
-            />
-          </FormControl>
+          <Form />
         </Stack>
         {matches ? (
           <Stack

@@ -1,7 +1,7 @@
 import { useState, useEffect, CSSProperties } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import CircleLoader from "react-spinners/CircleLoader";
-import { deepOrange } from "@mui/material/colors";
+import { deepOrange, amber } from "@mui/material/colors";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Container from "@material-ui/core/Container";
 
@@ -23,7 +23,8 @@ const theme = createTheme({
       main: "#F2F0EB",
     },
     error: {
-      main: deepOrange[500],
+      main: amber[900],
+      light: deepOrange[700],
     },
   },
   typography: {
