@@ -114,7 +114,7 @@ const tempArray: ForecastDataPerDay[] = [
 export default function MainPage(props: IAppProps) {
   const theme = useTheme();
 
-  const matches: boolean = useMediaQuery<string | undefined>(
+  const matchesMobileResolution: boolean = useMediaQuery<string | undefined>(
     theme.breakpoints.up("sm")
   );
 
@@ -126,7 +126,9 @@ export default function MainPage(props: IAppProps) {
     <Stack
       component="section"
       direction="column"
-      justifyContent={matches ? "space-evenly" : "space-between"}
+      justifyContent={
+        matchesMobileResolution ? "space-evenly" : "space-between"
+      }
       alignItems="center"
       sx={{
         width: "100",
@@ -136,18 +138,18 @@ export default function MainPage(props: IAppProps) {
     >
       <Box
         sx={{
-          width: matches ? "75%" : "100vw",
+          width: matchesMobileResolution ? "75%" : "100vw",
           height: "70%",
           backgroundColor: "blue",
-          borderTopLeftRadius: matches ? 12 : "none",
-          borderTopRightRadius: matches ? 12 : "none",
-          borderBottomLeftRadius: matches ? 12 : 24,
-          borderBottomRightRadius: matches ? 12 : 24,
+          borderTopLeftRadius: matchesMobileResolution ? 12 : "none",
+          borderTopRightRadius: matchesMobileResolution ? 12 : "none",
+          borderBottomLeftRadius: matchesMobileResolution ? 12 : 24,
+          borderBottomRightRadius: matchesMobileResolution ? 12 : 24,
           background: `linear-gradient(${
-            matches ? "45deg" : "145deg"
+            matchesMobileResolution ? "45deg" : "145deg"
           }, rgba(239,255,253,0) 0%, rgba(239,255,253,1) 100%)`,
-          paddingLeft: matches ? 2 : 0,
-          paddingRight: matches ? 2 : 0,
+          paddingLeft: matchesMobileResolution ? 2 : 0,
+          paddingRight: matchesMobileResolution ? 2 : 0,
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-around",
@@ -164,7 +166,7 @@ export default function MainPage(props: IAppProps) {
         >
           <Form />
         </Stack>
-        {matches ? (
+        {matchesMobileResolution ? (
           <Stack
             direction="column"
             justifyContent="start"
@@ -241,14 +243,14 @@ export default function MainPage(props: IAppProps) {
         >
           <Box
             sx={{
-              width: matches ? "80%" : "92vw",
+              width: matchesMobileResolution ? "80%" : "92vw",
               height: "80%",
               display: "flex",
             }}
           >
             <Swiper
               direction="horizontal"
-              slidesPerView={matches ? 8 : 4}
+              slidesPerView={matchesMobileResolution ? 8 : 4}
               mousewheel={true}
               modules={[Mousewheel]}
               className="mySwiper"
@@ -258,8 +260,8 @@ export default function MainPage(props: IAppProps) {
                   <SwiperSlide
                     key={`${day.date} + ${i}`}
                     style={{
-                      height: matches ? "70%" : "50%",
-                      maxWidth: matches ? "12.5%" : "23vw",
+                      height: matchesMobileResolution ? "70%" : "50%",
+                      maxWidth: matchesMobileResolution ? "12.5%" : "23vw",
                       display: "flex",
                       flexDirection: "column",
                       justifyContent: "center",
@@ -267,7 +269,7 @@ export default function MainPage(props: IAppProps) {
                       padding: 1,
                       borderRadius: 5,
                       color: `${
-                        matches
+                        matchesMobileResolution
                           ? theme.palette.secondary.main
                           : theme.palette.primary.main
                       }`,
@@ -285,18 +287,17 @@ export default function MainPage(props: IAppProps) {
       </Box>
       <Box
         sx={{
-          width: matches ? "60%" : "90%",
+          width: matchesMobileResolution ? "60%" : "90%",
           height: "25%",
           backgroundColor: "blue",
           borderRadius: 12,
           background: theme.palette.primary.main,
           paddingLeft: 2,
           paddingRight: 2,
-          paddingBottom: matches ? 0 : 4,
+          paddingBottom: matchesMobileResolution ? 0 : 3,
           display: "flex",
           alignItems: "center",
           flexDirection: "column",
-          marginBottom: smallScreen ? -2 : 0,
         }}
       >
         <Stack
@@ -308,14 +309,14 @@ export default function MainPage(props: IAppProps) {
           <Button
             variant="outlined"
             color="secondary"
-            size={matches ? "medium" : "small"}
+            size={matchesMobileResolution ? "medium" : "small"}
             sx={{ borderRadius: 2 }}
           >
             3 days
           </Button>
           <Button
             variant="contained"
-            size={matches ? "medium" : "small"}
+            size={matchesMobileResolution ? "medium" : "small"}
             sx={{ borderRadius: 2 }}
           >
             7 days
@@ -323,7 +324,7 @@ export default function MainPage(props: IAppProps) {
           <Button
             variant="outlined"
             color="secondary"
-            size={matches ? "medium" : "small"}
+            size={matchesMobileResolution ? "medium" : "small"}
             sx={{ borderRadius: 2 }}
           >
             10 days
@@ -338,7 +339,7 @@ export default function MainPage(props: IAppProps) {
         >
           <Swiper
             direction="horizontal"
-            slidesPerView={matches ? 6 : 3}
+            slidesPerView={matchesMobileResolution ? 6 : 3}
             mousewheel={true}
             modules={[Mousewheel]}
             className="mySwiper"
@@ -349,14 +350,14 @@ export default function MainPage(props: IAppProps) {
                   key={`${day.date} + ${i}`}
                   style={{
                     height: "70%",
-                    maxWidth: matches ? "14%" : "30%",
+                    maxWidth: matchesMobileResolution ? "14%" : "30%",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                     backgroundColor: theme.palette.secondary.main,
                     borderRadius: 5,
-                    marginLeft: matches ? "2.5%" : "3.3%",
+                    marginLeft: matchesMobileResolution ? "2.5%" : "3.3%",
                     color: theme.palette.primary.main,
                     boxShadow: "rgba(0, 0, 0, 0.69) 2px 2px 5px 0px",
                     cursor: "pointer",
