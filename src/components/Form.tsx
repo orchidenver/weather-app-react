@@ -1,11 +1,19 @@
-import { useState, useMemo, useRef, MutableRefObject } from "react";
+import { useState, useMemo, useRef, MutableRefObject, forwardRef } from "react";
 import {
   FormControl,
   useMediaQuery,
   Typography,
   Autocomplete,
   TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Slide,
+  Button,
 } from "@mui/material";
+import { TransitionProps } from "@mui/material/transitions";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -25,7 +33,17 @@ const schema = yup.object({
     }),
 });
 
+const Transition = forwardRef(function Transition(
+  props: TransitionProps & {
+    children: React.ReactElement<any, any>;
+  },
+  ref: React.Ref<unknown>
+) {
+  return <Slide direction="down" ref={ref} {...props} />;
+});
+
 export default function Form(props: IAppProps) {
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const [selectedCityByUser, setSelectedCityByUser] = useState<CityType | null>(
     null
   );
@@ -73,7 +91,7 @@ export default function Form(props: IAppProps) {
     value
   ) => {
     fetch(
-      `http://api.openweathermap.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
+      `http://api.openwdeathermapq.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
         process.env.REACT_APP_API_KEY
       }`
     )
@@ -92,7 +110,10 @@ export default function Form(props: IAppProps) {
         setShowCitySelection(true);
         clearErrors("city");
       })
-      .catch((err) => alert(err));
+      .catch((err) => {
+        setShowPopup(true);
+        console.error(err);
+      });
   };
 
   function onCloseHandler() {
@@ -124,75 +145,102 @@ export default function Form(props: IAppProps) {
     onFocusHandler();
   }
 
+  const onClosePopupHandle = () => {
+    setShowPopup(false);
+  };
+
   return (
-    <FormControl
-      variant="outlined"
-      sx={{
-        width: { lg: "40%", xl: "40%", md: "50%", sm: "50%", xs: "80%" },
-      }}
-    >
-      <Autocomplete
-        open={showCitySelection}
-        filterOptions={(x) => x}
-        forcePopupIcon={false}
-        loading={false}
-        disablePortal={false}
-        getOptionLabel={(option) => option.name}
-        id="city-search"
-        options={searchedCitySelection}
-        size="small"
+    <>
+      <FormControl
+        variant="outlined"
         sx={{
-          borderRadius: 18,
-          border: "none",
-          position: "relative",
-          background: matchesMobileResolution
-            ? "linear-gradient(45deg, rgba(242, 251, 255, 0.1) 0%, #F2F0EB 100%)"
-            : "linear-gradient(0deg, rgba(242, 251, 255, 0.1) -60%, #F2F0EB 100%)",
-        }}
-        renderInput={(params) => (
-          <TextField
-            {...params}
-            {...register("city", { required: true })}
-            inputRef={searchInput}
-            label="City"
-            inputProps={{
-              ...params.inputProps,
-            }}
-          />
-        )}
-        renderOption={(props, option) => {
-          return (
-            <li
-              {...props}
-              onClick={() => onSelectedCityHandler(option)}
-            >{`${option.name}`}</li>
-          );
-        }}
-        onInputChange={handleSubmit(optimizedDebounce)}
-        clearIcon={
-          <CloseIcon
-            sx={{
-              cursor: "pointer",
-              color: theme.palette.primary.main,
-            }}
-            onClick={onCloseHandler}
-          />
-        }
-      />
-      <Typography
-        variant="caption"
-        display="block"
-        sx={{
-          textAlign: "center",
-          height: 2,
-          marginTop: 1,
-          color: matchesMobileResolution
-            ? theme.palette.error.light
-            : theme.palette.error.main,
+          width: { lg: "40%", xl: "40%", md: "50%", sm: "50%", xs: "80%" },
         }}
       >
-        {errors?.city?.message}
-      </Typography>
-    </FormControl>
+        <Autocomplete
+          open={showCitySelection}
+          filterOptions={(x) => x}
+          forcePopupIcon={false}
+          loading={false}
+          disablePortal={false}
+          getOptionLabel={(option) => option.name}
+          id="city-search"
+          options={searchedCitySelection}
+          size="small"
+          sx={{
+            borderRadius: 18,
+            border: "none",
+            position: "relative",
+            background: matchesMobileResolution
+              ? "linear-gradient(45deg, rgba(242, 251, 255, 0.1) 0%, #F2F0EB 100%)"
+              : "linear-gradient(0deg, rgba(242, 251, 255, 0.1) -60%, #F2F0EB 100%)",
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              {...register("city", { required: true })}
+              inputRef={searchInput}
+              label="City"
+              inputProps={{
+                ...params.inputProps,
+              }}
+            />
+          )}
+          renderOption={(props, option) => {
+            return (
+              <li
+                {...props}
+                onClick={() => onSelectedCityHandler(option)}
+              >{`${option.name}`}</li>
+            );
+          }}
+          onInputChange={handleSubmit(optimizedDebounce)}
+          clearIcon={
+            <CloseIcon
+              sx={{
+                cursor: "pointer",
+                color: theme.palette.primary.main,
+              }}
+              onClick={onCloseHandler}
+            />
+          }
+        />
+        <Typography
+          variant="caption"
+          display="block"
+          sx={{
+            textAlign: "center",
+            height: 2,
+            marginTop: 1,
+            color: matchesMobileResolution
+              ? theme.palette.error.light
+              : theme.palette.error.main,
+          }}
+        >
+          {errors?.city?.message}
+        </Typography>
+      </FormControl>
+      {showPopup ? (
+        <Dialog
+          open={showPopup}
+          TransitionComponent={Transition}
+          keepMounted
+          onClose={onClosePopupHandle}
+          aria-describedby="alert-dialog-slide-description"
+        >
+          <DialogTitle>{`We are sincerely sorry`}</DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-slide-description">
+              It looks like something went wrong when processing your request.
+              Our specialists are working on it so be sure to try your request
+              again in 5 minutes.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={onClosePopupHandle}>OK</Button>
+          </DialogActions>
+        </Dialog>
+      ) : null}
+    </>
   );
 }
