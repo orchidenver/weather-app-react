@@ -1,35 +1,19 @@
 import { useState, useMemo, useRef, MutableRefObject } from "react";
 import {
-  InputAdornment,
   FormControl,
-  InputLabel,
-  OutlinedInput,
   useMediaQuery,
   Typography,
   Autocomplete,
   TextField,
 } from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
 import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { CityType, CityTypeExtended } from "../interfaces";
 import * as yup from "yup";
 
-export interface IAppProps {}
-type CityType = {
-  name: string;
-  state: string;
-  lat: number;
-  lon: number;
-};
-type LocalNamesType = string;
-type LocalNamesObjectType = { [T in LocalNamesType]: string };
-type CityTypeExtended = {
-  country: string;
-  local_names: LocalNamesObjectType;
-} & CityType;
-type FormData = yup.InferType<typeof schema>;
+interface IAppProps {}
 
 const schema = yup.object({
   city: yup
@@ -42,9 +26,13 @@ const schema = yup.object({
 });
 
 export default function Form(props: IAppProps) {
-  const [selectedCity, setSelectedCity] = useState<CityType | null>(null);
-  const [showOptions, setShowOptions] = useState<boolean>(false);
-  const [cities, setCities] = useState<CityType[]>([
+  const [selectedCityByUser, setSelectedCityByUser] = useState<CityType | null>(
+    null
+  );
+  const [showCitySelection, setShowCitySelection] = useState<boolean>(false);
+  const [searchedCitySelection, setSearchedCitySelection] = useState<
+    CityType[]
+  >([
     {
       name: "",
       state: "",
@@ -63,7 +51,7 @@ export default function Form(props: IAppProps) {
     handleSubmit,
     clearErrors,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<yup.InferType<typeof schema>>({
     mode: "onTouched",
     resolver: yupResolver(schema),
   });
@@ -71,62 +59,69 @@ export default function Form(props: IAppProps) {
   const debounce = () => {
     let timeoutID: ReturnType<typeof setTimeout>;
 
-    return (value: FormData) => {
+    return (value: yup.InferType<typeof schema>) => {
       clearTimeout(timeoutID);
       timeoutID = setTimeout(() => {
-        console.log(value);
-        onHandleChange(value);
+        if (value?.city && value?.city?.trim() !== "") {
+          onChangeHandler(value);
+        }
       }, 700);
     };
   };
 
-  const onHandleChange: SubmitHandler<FormData> = (value) => {
-    if (!value?.city) {
-      setShowOptions(false);
-      return;
-    }
-
-    if (value?.city && typeof value?.city !== "string") {
-      setSelectedCity(null);
-      setShowOptions(false);
-      return;
-    }
-
-    if (value?.city && value?.city?.trim() !== "") {
-      console.log("call");
-      fetch(
-        `http://api.openweathermap.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
-          process.env.REACT_APP_API_KEY
-        }`
-      )
-        .then((response) => response.json())
-        .then((response) => {
-          const cities = response.map((city: CityTypeExtended): CityType => {
-            const label = `${city?.name}, ${city?.country}, ${city?.state}`;
-            return {
-              name: label,
-              state: city?.state,
-              lat: city?.lat,
-              lon: city?.lon,
-            };
-          });
-          setCities(cities);
-          setShowOptions(true);
-          clearErrors("city");
-        })
-        .catch((err) => console.error(err));
-    }
+  const onChangeHandler: SubmitHandler<yup.InferType<typeof schema>> = (
+    value
+  ) => {
+    fetch(
+      `http://api.openweathermap.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
+        process.env.REACT_APP_API_KEY
+      }`
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        const cities = response.map((city: CityTypeExtended): CityType => {
+          const label = `${city?.name}, ${city?.country}, ${city?.state}`;
+          return {
+            name: label,
+            state: city?.state,
+            lat: city?.lat,
+            lon: city?.lon,
+          };
+        });
+        setSearchedCitySelection(cities);
+        setShowCitySelection(true);
+        clearErrors("city");
+      })
+      .catch((err) => alert(err));
   };
 
-  function onHandleClose() {
-    setSelectedCity(null);
-    setShowOptions(false);
+  function onCloseHandler() {
+    setSelectedCityByUser(null);
+    setShowCitySelection(false);
   }
 
   const optimizedDebounce = useMemo(() => debounce(), []);
 
-  function handleFocus() {
+  function onFocusHandler() {
     searchInput?.current.blur();
+  }
+
+  function onSelectedCityHandler(cityData: CityType) {
+    setSelectedCityByUser(cityData);
+    setShowCitySelection(false);
+    setSearchedCitySelection([
+      {
+        name: "",
+        state: "",
+        lat: 0,
+        lon: 0,
+      },
+    ]);
+    reset({
+      city: "",
+    });
+    clearErrors("city");
+    onFocusHandler();
   }
 
   return (
@@ -136,26 +131,15 @@ export default function Form(props: IAppProps) {
         width: { lg: "40%", xl: "40%", md: "50%", sm: "50%", xs: "80%" },
       }}
     >
-      {/* <InputLabel
-        htmlFor="outlined-adornment-search"
-        sx={{
-          top: -7,
-          color: matchesMobileResolution
-            ? theme.palette.primary.main
-            : theme.palette.secondary.main,
-        }}
-      >
-        Search
-      </InputLabel> */}
       <Autocomplete
-        open={showOptions}
+        open={showCitySelection}
         filterOptions={(x) => x}
         forcePopupIcon={false}
         loading={false}
         disablePortal={false}
         getOptionLabel={(option) => option.name}
-        id="combo-box-demo"
-        options={cities}
+        id="city-search"
+        options={searchedCitySelection}
         size="small"
         sx={{
           borderRadius: 18,
@@ -180,23 +164,7 @@ export default function Form(props: IAppProps) {
           return (
             <li
               {...props}
-              onClick={() => {
-                setSelectedCity(option);
-                setShowOptions(false);
-                setCities([
-                  {
-                    name: "",
-                    state: "",
-                    lat: 1,
-                    lon: 1,
-                  },
-                ]);
-                reset({
-                  city: "",
-                });
-                clearErrors("city");
-                handleFocus();
-              }}
+              onClick={() => onSelectedCityHandler(option)}
             >{`${option.name}`}</li>
           );
         }}
@@ -207,46 +175,10 @@ export default function Form(props: IAppProps) {
               cursor: "pointer",
               color: theme.palette.primary.main,
             }}
-            onClick={onHandleClose}
+            onClick={onCloseHandler}
           />
         }
       />
-      {/* <OutlinedInput
-        defaultValue={city}
-        {...register("city", { required: true })}
-        id="outlined-adornment-search"
-        size="small"
-        sx={{
-          borderRadius: 18,
-          border: "none",
-          background: matchesMobileResolution
-            ? "linear-gradient(45deg, rgba(242, 251, 255, 0.1) 0%, #F2F0EB 100%)"
-            : "linear-gradient(0deg, rgba(242, 251, 255, 0.1) -60%, #F2F0EB 100%)",
-          "&.MuiOutlinedInput-root .MuiOutlinedInput-notchedOutline": {
-            borderColor: "transparent",
-          },
-          "&.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline": {
-            borderColor: "white",
-          },
-          "&.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline":
-            {
-              border: "none",
-            },
-        }}
-        endAdornment={
-          <InputAdornment position="end">
-            <SearchIcon
-              sx={{
-                cursor: "pointer",
-                color: theme.palette.primary.main,
-              }}
-              onClick={handleSubmit(handleFormSubmit)}
-            />
-          </InputAdornment>
-        }
-        label="Search"
-        onChange={optimizedDebounce}
-      /> */}
       <Typography
         variant="caption"
         display="block"
