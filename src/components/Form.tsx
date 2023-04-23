@@ -121,7 +121,7 @@ export default function Form(props: IAppProps) {
     setShowCitySelection(false);
   }
 
-  const optimizedDebounce = useMemo(() => debounce(), []);
+  const onInputChangeHandlerDebounce = useMemo(() => debounce(), []);
 
   function onFocusHandler() {
     searchInput?.current.blur();
@@ -194,7 +194,7 @@ export default function Form(props: IAppProps) {
               >{`${option.name}`}</li>
             );
           }}
-          onInputChange={handleSubmit(optimizedDebounce)}
+          onInputChange={handleSubmit(onInputChangeHandlerDebounce)}
           clearIcon={
             <CloseIcon
               sx={{
