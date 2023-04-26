@@ -21,6 +21,7 @@ const theme = createTheme({
     },
     secondary: {
       main: "#F2F0EB",
+      dark: "#e8e2d3",
     },
     error: {
       main: amber[900],

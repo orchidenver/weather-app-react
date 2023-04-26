@@ -1,10 +1,13 @@
 import { Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import sunnyMedium from "../assets/sunny-medium.svg";
+import { CurrentWeatherType } from "../interfaces";
 
-export interface IAppProps {}
+type MobileViewProps = {
+  currentCityData: CurrentWeatherType | null;
+};
 
-export default function MobileView(props: IAppProps) {
+export default function MobileView(props: MobileViewProps) {
   const theme = useTheme();
 
   return (
@@ -21,10 +24,10 @@ export default function MobileView(props: IAppProps) {
       }}
     >
       <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
-        Monday, 10/04/2023
+        {props?.currentCityData?.date}
       </Typography>
       <Typography variant="h3" component="h3" sx={{ height: "15%" }}>
-        Kyiv, Ukraine
+        {props?.currentCityData?.city}
       </Typography>
       <Typography
         variant="h3"
@@ -32,7 +35,7 @@ export default function MobileView(props: IAppProps) {
         mb={3}
         sx={{ height: "15%", fontSize: "4rem !important" }}
       >
-        +7
+        {`${props?.currentCityData?.temp} °C`}
       </Typography>
       <img
         src={sunnyMedium}
@@ -50,7 +53,7 @@ export default function MobileView(props: IAppProps) {
           height: "15%",
         }}
       >
-        Sunny
+        {props?.currentCityData?.weatherDescription}
       </Typography>
       <Typography
         variant="h4"
@@ -58,7 +61,7 @@ export default function MobileView(props: IAppProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Humidity: 77%
+        Humidity: {props?.currentCityData?.humidity}%
       </Typography>
       <Typography
         variant="h4"
@@ -66,7 +69,7 @@ export default function MobileView(props: IAppProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Wind speed: 5 m/sec
+        Wind speed: {props?.currentCityData?.windSpeed} m/sec
       </Typography>
     </Stack>
   );

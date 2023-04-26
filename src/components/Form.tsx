@@ -1,4 +1,13 @@
-import { useState, useMemo, useRef, MutableRefObject, forwardRef } from "react";
+import {
+  useState,
+  useMemo,
+  useRef,
+  MutableRefObject,
+  forwardRef,
+  Dispatch,
+  SetStateAction,
+  useEffect,
+} from "react";
 import {
   FormControl,
   useMediaQuery,
@@ -18,10 +27,19 @@ import CloseIcon from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material/styles";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { CityType, CityTypeExtended } from "../interfaces";
+import {
+  CityType,
+  CityTypeExtended,
+  CurrentWeatherType,
+  WeatherForecast,
+} from "../interfaces";
+import { transformDate } from "../helpers";
 import * as yup from "yup";
 
-interface IAppProps {}
+type FormProps = {
+  onWeatherChange: Dispatch<SetStateAction<CurrentWeatherType | null>>;
+  onWeatherForecast: Dispatch<SetStateAction<CurrentWeatherType[]>>;
+};
 
 const schema = yup.object({
   city: yup
@@ -42,7 +60,10 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-export default function Form(props: IAppProps) {
+export default function Form({
+  onWeatherChange,
+  onWeatherForecast,
+}: FormProps) {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [selectedCityByUser, setSelectedCityByUser] = useState<CityType | null>(
     null
@@ -74,6 +95,15 @@ export default function Form(props: IAppProps) {
     resolver: yupResolver(schema),
   });
 
+  useEffect(() => {
+    onSelectedCityHandler({
+      name: "Odesa",
+      state: "Ukraine",
+      lat: 46.4843023,
+      lon: 30.7322878,
+    });
+  }, []);
+
   const debounce = () => {
     let timeoutID: ReturnType<typeof setTimeout>;
 
@@ -91,14 +121,16 @@ export default function Form(props: IAppProps) {
     value
   ) => {
     fetch(
-      `http://api.openwdeathermapq.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
+      `http://api.openweathermap.org/geo/1.0/direct?q=${value?.city?.trim()}&limit=5&appid=${
         process.env.REACT_APP_API_KEY
       }`
     )
       .then((response) => response.json())
       .then((response) => {
         const cities = response.map((city: CityTypeExtended): CityType => {
-          const label = `${city?.name}, ${city?.country}, ${city?.state}`;
+          const label = `${city?.name}, ${city?.country}${
+            city.state ? ", " + city?.state : ""
+          }`;
           return {
             name: label,
             state: city?.state,
@@ -127,9 +159,63 @@ export default function Form(props: IAppProps) {
     searchInput?.current.blur();
   }
 
+  function fetchCurrentWeatherData(cityData: CityType) {
+    fetch(
+      `https://api.openweathermap.org/data/2.5/weather?lat=${cityData?.lat}&lon=${cityData?.lon}&units=metric&appid=${process.env.REACT_APP_API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        onWeatherChange({
+          date: transformDate(new Date()),
+          city: cityData?.name.split(",")[0],
+          temp: Math.round(response.main.temp),
+          weatherDescription: response.weather[0].main,
+          humidity: response.main.humidity,
+          windSpeed: Math.round(response.wind.speed),
+        });
+      })
+      .catch((err) => {
+        setShowPopup(true);
+        console.error(err);
+      });
+  }
+
+  function fetchForecatsForFiveDays(cityData: CityType) {
+    fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?lat=${cityData?.lat}&lon=${cityData?.lon}&units=metric&appid=${process.env.REACT_APP_API_KEY}`
+    )
+      .then((response) => response.json())
+      .then((response) => {
+        const forecastId: number = response.city.id;
+
+        const fiveDayForecast: CurrentWeatherType[] = response.list.map(
+          (data: WeatherForecast, i: number) => {
+            return {
+              id: forecastId + i,
+              date: data.dt,
+              city: cityData?.name.split(",")[0],
+              temp: Math.round(data.main.temp),
+              weatherDescription: data.weather[0].main,
+              humidity: data.main.humidity,
+              windSpeed: Math.round(data.wind.speed),
+            };
+          }
+        );
+        onWeatherForecast(fiveDayForecast);
+      })
+      .catch((err) => {
+        setShowPopup(true);
+        console.error(err);
+      });
+  }
+
   function onSelectedCityHandler(cityData: CityType) {
     setSelectedCityByUser(cityData);
     setShowCitySelection(false);
+
+    fetchCurrentWeatherData(cityData);
+    fetchForecatsForFiveDays(cityData);
+
     setSearchedCitySelection([
       {
         name: "",

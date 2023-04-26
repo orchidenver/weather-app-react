@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, MouseEvent } from "react";
 import { Box, Stack, Typography, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
@@ -9,9 +9,19 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel } from "swiper";
 import sunny from "../assets/sunny.svg";
 import rainySmall from "../assets/rainy-small.svg";
-import { ForecastDataPerDay } from "../interfaces";
+import {
+  ForecastDataPerDay,
+  CurrentWeatherType,
+  CityType,
+  ButtonEnum,
+} from "../interfaces";
 import MobileView from "./MobileView";
 import Form from "../components/Form";
+import {
+  selectWeatherImage,
+  filterForecastData,
+  transformDate,
+} from "../helpers";
 
 import "swiper/css";
 import "./MainPage.css";
@@ -112,15 +122,44 @@ const tempArray: ForecastDataPerDay[] = [
 ];
 
 export default function MainPage(props: IAppProps) {
+  const [selectedCityCurrentWeather, setSelectedCityCurrentWeather] =
+    useState<CurrentWeatherType | null>({
+      date: "Monday, 24/04/2023",
+      city: "Odesa",
+      temp: 0,
+      weatherDescription: "Clouds",
+      humidity: 70,
+      windSpeed: 5,
+    });
+  const [
+    selectedCityByUserFiveDaysForecast,
+    setSelectedCityByUserFiveDaysForecast,
+  ] = useState<CurrentWeatherType[]>([
+    {
+      date: "Monday, 24/04/2023",
+      city: "Odesa",
+      temp: 0,
+      weatherDescription: "Clouds",
+      humidity: 70,
+      windSpeed: 5,
+    },
+  ]);
+  const [daysPerViewForecast, setDaysPerViewForecast] = useState<number>(
+    ButtonEnum.TWO
+  );
   const theme = useTheme();
-
   const matchesMobileResolution: boolean = useMediaQuery<string | undefined>(
     theme.breakpoints.up("sm")
   );
-
   const smallScreen: boolean = useMediaQuery<string | undefined>(
     "@media (max-width: 375px)"
   );
+
+  function daysPerView(e: MouseEvent<HTMLButtonElement>) {
+    const textValue: string | null = (e.target as HTMLElement)!.textContent;
+    const daysPerView: number = +textValue!.split(" ")[0];
+    setDaysPerViewForecast(daysPerView);
+  }
 
   return (
     <Stack
@@ -164,7 +203,10 @@ export default function MainPage(props: IAppProps) {
             height: "15%",
           }}
         >
-          <Form />
+          <Form
+            onWeatherChange={setSelectedCityCurrentWeather}
+            onWeatherForecast={setSelectedCityByUserFiveDaysForecast}
+          />
         </Stack>
         {matchesMobileResolution ? (
           <Stack
@@ -180,14 +222,14 @@ export default function MainPage(props: IAppProps) {
             }}
           >
             <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
-              Monday, 10/04/2023
+              {selectedCityCurrentWeather?.date}
             </Typography>
             <Typography
               variant="h3"
               component="h3"
               sx={{ height: "15%", marginBottom: 1 }}
             >
-              Kyiv, Ukraine
+              {selectedCityCurrentWeather?.city}
             </Typography>
             <Typography
               variant="h3"
@@ -195,7 +237,7 @@ export default function MainPage(props: IAppProps) {
               mb={0}
               sx={{ height: "15%", marginBottom: 1 }}
             >
-              +7
+              {`${selectedCityCurrentWeather?.temp} °C`}
             </Typography>
             <Typography
               variant="h3"
@@ -209,17 +251,19 @@ export default function MainPage(props: IAppProps) {
                 width: 190,
               }}
             >
-              Sunny <WbSunnyIcon fontSize="large" />
+              {selectedCityCurrentWeather?.weatherDescription}
             </Typography>
             <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>
-              Humidity: 77%
+              Humidity: {selectedCityCurrentWeather?.humidity}%
             </Typography>
             <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>
-              Wind speed: 5 m/sec
+              Wind speed: {selectedCityCurrentWeather?.windSpeed} m/sec
             </Typography>
             <img
-              src={sunny}
-              alt="sunny weather"
+              src={selectWeatherImage(
+                selectedCityCurrentWeather?.weatherDescription
+              )}
+              alt={`${selectedCityCurrentWeather?.weatherDescription} weather`}
               loading="lazy"
               style={{
                 position: "absolute",
@@ -230,7 +274,7 @@ export default function MainPage(props: IAppProps) {
             />
           </Stack>
         ) : (
-          <MobileView />
+          <MobileView currentCityData={selectedCityCurrentWeather} />
         )}
         <Stack
           direction="row"
@@ -251,36 +295,46 @@ export default function MainPage(props: IAppProps) {
             <Swiper
               direction="horizontal"
               slidesPerView={matchesMobileResolution ? 8 : 4}
+              centerInsufficientSlides={true}
               mousewheel={true}
               modules={[Mousewheel]}
               className="mySwiper"
+              style={{ width: "100%" }}
             >
-              {tempArray.map((day: ForecastDataPerDay, i) => {
-                return (
-                  <SwiperSlide
-                    key={`${day.date} + ${i}`}
-                    style={{
-                      height: matchesMobileResolution ? "70%" : "50%",
-                      maxWidth: matchesMobileResolution ? "12.5%" : "23vw",
-                      display: "flex",
-                      flexDirection: "column",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      padding: 1,
-                      borderRadius: 5,
-                      color: `${
-                        matchesMobileResolution
-                          ? theme.palette.secondary.main
-                          : theme.palette.primary.main
-                      }`,
-                    }}
-                  >
-                    <Typography>{day.date}</Typography>
-                    <img style={{ height: 50 }} alt="weather" src={day.img} />
-                    <Typography>{day.temp}</Typography>
-                  </SwiperSlide>
-                );
-              })}
+              {filterForecastData(selectedCityByUserFiveDaysForecast).map(
+                (day: CurrentWeatherType) => {
+                  return (
+                    <SwiperSlide
+                      key={day.id}
+                      style={{
+                        height: matchesMobileResolution ? "100%" : "50%",
+                        maxWidth: matchesMobileResolution ? "12.5%" : "23vw",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        padding: 1,
+                        borderRadius: 5,
+                        color: `${
+                          matchesMobileResolution
+                            ? theme.palette.secondary.main
+                            : theme.palette.primary.main
+                        }`,
+                      }}
+                    >
+                      <Typography>
+                        {transformDate(new Date(day.date), true)}
+                      </Typography>
+                      <img
+                        style={{ height: 50 }}
+                        alt="weather"
+                        src={selectWeatherImage(day.weatherDescription)}
+                      />
+                      <Typography>{day.temp + " °C"}</Typography>
+                    </SwiperSlide>
+                  );
+                }
+              )}
             </Swiper>
           </Box>
         </Stack>
@@ -311,23 +365,27 @@ export default function MainPage(props: IAppProps) {
             color="secondary"
             size={matchesMobileResolution ? "medium" : "small"}
             sx={{ borderRadius: 2 }}
+            onClick={daysPerView}
           >
-            3 days
-          </Button>
-          <Button
-            variant="contained"
-            size={matchesMobileResolution ? "medium" : "small"}
-            sx={{ borderRadius: 2 }}
-          >
-            7 days
+            2 days
           </Button>
           <Button
             variant="outlined"
             color="secondary"
             size={matchesMobileResolution ? "medium" : "small"}
             sx={{ borderRadius: 2 }}
+            onClick={daysPerView}
           >
-            10 days
+            3 days
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            size={matchesMobileResolution ? "medium" : "small"}
+            sx={{ borderRadius: 2 }}
+            onClick={daysPerView}
+          >
+            5 days
           </Button>
         </Stack>
         <Stack
@@ -343,11 +401,15 @@ export default function MainPage(props: IAppProps) {
             mousewheel={true}
             modules={[Mousewheel]}
             className="mySwiper"
+            style={{ width: "100%" }}
           >
-            {tempArray.map((day: ForecastDataPerDay, i) => {
+            {filterForecastData(
+              selectedCityByUserFiveDaysForecast,
+              daysPerViewForecast
+            ).map((day: CurrentWeatherType) => {
               return (
                 <SwiperSlide
-                  key={`${day.date} + ${i}`}
+                  key={day.id}
                   style={{
                     height: "70%",
                     maxWidth: matchesMobileResolution ? "14%" : "30%",
@@ -355,7 +417,7 @@ export default function MainPage(props: IAppProps) {
                     flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
-                    backgroundColor: theme.palette.secondary.main,
+                    backgroundColor: theme.palette.secondary.dark,
                     borderRadius: 5,
                     marginLeft: matchesMobileResolution ? "2.5%" : "3.3%",
                     color: theme.palette.primary.main,
@@ -363,9 +425,18 @@ export default function MainPage(props: IAppProps) {
                     cursor: "pointer",
                   }}
                 >
-                  <Typography>{day.date}</Typography>
-                  <img style={{ height: 50 }} alt="weather" src={day.img} />
-                  <Typography>{day.temp}</Typography>
+                  <Typography
+                    variant={smallScreen ? "caption" : "body2"}
+                    sx={{ textAlign: "center" }}
+                  >
+                    {transformDate(new Date(day.date), true, true)}
+                  </Typography>
+                  <img
+                    style={{ height: 50 }}
+                    alt="weather"
+                    src={selectWeatherImage(day.weatherDescription)}
+                  />
+                  <Typography>{day.temp + " °C"}</Typography>
                 </SwiperSlide>
               );
             })}
