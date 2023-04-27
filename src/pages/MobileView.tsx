@@ -1,7 +1,7 @@
 import { Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import sunnyMedium from "../assets/sunny-medium.svg";
-import { CurrentWeatherType } from "../interfaces";
+import { CurrentWeatherType } from "../types";
 
 type MobileViewProps = {
   currentCityData: CurrentWeatherType | null;

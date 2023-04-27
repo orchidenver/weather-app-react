@@ -1,25 +1,16 @@
-import { string } from "yup";
-
-export interface ForecastDataPerDay {
-  date: string;
-  img: string;
-  temp: string;
-}
-
-export type CityType = {
+export type SearchedCityType = {
   name: string;
   state: string;
   lat: number;
   lon: number;
 };
-export type StringType = string;
-export type LocalNamesObjectType = { [T in StringType]: string };
-export type CityTypeExtended = {
+
+export type SearchedCityTypeExtended = {
   country: string;
-  local_names: LocalNamesObjectType;
-} & CityType;
+  local_names: { [T in string]: string };
+} & SearchedCityType;
+
 export type CurrentWeatherType = {
-  id?: string | number;
   date: string | number;
   city: string | undefined;
   temp: number;
@@ -27,6 +18,7 @@ export type CurrentWeatherType = {
   humidity: number;
   windSpeed: number;
 };
+
 export type WeatherForecast = {
   clouds: {
     all: number;
@@ -34,7 +26,7 @@ export type WeatherForecast = {
   dt: number;
   dt_txt: string;
   main: {
-    [T in StringType]: number;
+    [T in string]: number;
   };
   pop: 0;
   sys: {
@@ -48,10 +40,11 @@ export type WeatherForecast = {
     icon: string;
   }[];
   wind: {
-    [T in StringType]: number;
+    [T in string]: number;
   };
 };
-export enum ButtonEnum {
+
+export enum ButtonDaysPerViewEnum {
   TWO = 2,
   THREE = 3,
   FIVE = 5,

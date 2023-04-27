@@ -1,20 +1,9 @@
 import { useState, MouseEvent } from "react";
 import { Box, Stack, Typography, Button, useMediaQuery } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import WbSunnyIcon from "@mui/icons-material/WbSunny";
-import ThunderstormIcon from "@mui/icons-material/Thunderstorm";
-import WbCloudyIcon from "@mui/icons-material/WbCloudy";
-import AcUnitIcon from "@mui/icons-material/AcUnit";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel } from "swiper";
-import sunny from "../assets/sunny.svg";
-import rainySmall from "../assets/rainy-small.svg";
-import {
-  ForecastDataPerDay,
-  CurrentWeatherType,
-  CityType,
-  ButtonEnum,
-} from "../interfaces";
+import { CurrentWeatherType, ButtonDaysPerViewEnum } from "../types";
 import MobileView from "./MobileView";
 import Form from "../components/Form";
 import {
@@ -27,99 +16,6 @@ import "swiper/css";
 import "./MainPage.css";
 
 export interface IAppProps {}
-
-const tempArray: ForecastDataPerDay[] = [
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-  {
-    date: "23 may",
-    img: rainySmall,
-    temp: "23°C",
-  },
-];
 
 export default function MainPage(props: IAppProps) {
   const [selectedCityCurrentWeather, setSelectedCityCurrentWeather] =
@@ -145,7 +41,7 @@ export default function MainPage(props: IAppProps) {
     },
   ]);
   const [daysPerViewForecast, setDaysPerViewForecast] = useState<number>(
-    ButtonEnum.TWO
+    ButtonDaysPerViewEnum.TWO
   );
   const theme = useTheme();
   const matchesMobileResolution: boolean = useMediaQuery<string | undefined>(
@@ -305,7 +201,7 @@ export default function MainPage(props: IAppProps) {
                 (day: CurrentWeatherType) => {
                   return (
                     <SwiperSlide
-                      key={day.id}
+                      key={(day.date as string) + 1}
                       style={{
                         height: matchesMobileResolution ? "100%" : "50%",
                         maxWidth: matchesMobileResolution ? "12.5%" : "23vw",
@@ -409,7 +305,7 @@ export default function MainPage(props: IAppProps) {
             ).map((day: CurrentWeatherType) => {
               return (
                 <SwiperSlide
-                  key={day.id}
+                  key={(day.date as string) + 1}
                   style={{
                     height: "70%",
                     maxWidth: matchesMobileResolution ? "14%" : "30%",

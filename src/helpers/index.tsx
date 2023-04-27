@@ -3,7 +3,7 @@ import clear from "../assets/moon.svg";
 import rainy from "../assets/rainy.svg";
 import snowy from "../assets/snowy.svg";
 import cloudy from "../assets/cloudy-medium.svg";
-import { CurrentWeatherType } from "../interfaces";
+import { CurrentWeatherType } from "../types";
 
 export function transformDate(
   date: Date,

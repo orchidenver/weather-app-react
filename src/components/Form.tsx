@@ -28,11 +28,11 @@ import { useTheme } from "@mui/material/styles";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import {
-  CityType,
-  CityTypeExtended,
+  SearchedCityType,
+  SearchedCityTypeExtended,
   CurrentWeatherType,
   WeatherForecast,
-} from "../interfaces";
+} from "../types";
 import { transformDate } from "../helpers";
 import * as yup from "yup";
 
@@ -65,12 +65,11 @@ export default function Form({
   onWeatherForecast,
 }: FormProps) {
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [selectedCityByUser, setSelectedCityByUser] = useState<CityType | null>(
-    null
-  );
+  const [selectedCityByUser, setSelectedCityByUser] =
+    useState<SearchedCityType | null>(null);
   const [showCitySelection, setShowCitySelection] = useState<boolean>(false);
   const [searchedCitySelection, setSearchedCitySelection] = useState<
-    CityType[]
+    SearchedCityType[]
   >([
     {
       name: "",
@@ -127,17 +126,19 @@ export default function Form({
     )
       .then((response) => response.json())
       .then((response) => {
-        const cities = response.map((city: CityTypeExtended): CityType => {
-          const label = `${city?.name}, ${city?.country}${
-            city.state ? ", " + city?.state : ""
-          }`;
-          return {
-            name: label,
-            state: city?.state,
-            lat: city?.lat,
-            lon: city?.lon,
-          };
-        });
+        const cities = response.map(
+          (city: SearchedCityTypeExtended): SearchedCityType => {
+            const label = `${city?.name}, ${city?.country}${
+              city.state ? ", " + city?.state : ""
+            }`;
+            return {
+              name: label,
+              state: city?.state,
+              lat: city?.lat,
+              lon: city?.lon,
+            };
+          }
+        );
         setSearchedCitySelection(cities);
         setShowCitySelection(true);
         clearErrors("city");
@@ -159,7 +160,7 @@ export default function Form({
     searchInput?.current.blur();
   }
 
-  function fetchCurrentWeatherData(cityData: CityType) {
+  function fetchCurrentWeatherData(cityData: SearchedCityType) {
     fetch(
       `https://api.openweathermap.org/data/2.5/weather?lat=${cityData?.lat}&lon=${cityData?.lon}&units=metric&appid=${process.env.REACT_APP_API_KEY}`
     )
@@ -180,7 +181,7 @@ export default function Form({
       });
   }
 
-  function fetchForecatsForFiveDays(cityData: CityType) {
+  function fetchForecatsForFiveDays(cityData: SearchedCityType) {
     fetch(
       `https://api.openweathermap.org/data/2.5/forecast?lat=${cityData?.lat}&lon=${cityData?.lon}&units=metric&appid=${process.env.REACT_APP_API_KEY}`
     )
@@ -209,7 +210,7 @@ export default function Form({
       });
   }
 
-  function onSelectedCityHandler(cityData: CityType) {
+  function onSelectedCityHandler(cityData: SearchedCityType) {
     setSelectedCityByUser(cityData);
     setShowCitySelection(false);
 
