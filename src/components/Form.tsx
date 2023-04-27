@@ -32,14 +32,10 @@ import {
   SearchedCityTypeExtended,
   CurrentWeatherType,
   WeatherForecast,
+  FormProps,
 } from "../types";
 import { transformDate } from "../helpers";
 import * as yup from "yup";
-
-type FormProps = {
-  onWeatherChange: Dispatch<SetStateAction<CurrentWeatherType | null>>;
-  onWeatherForecast: Dispatch<SetStateAction<CurrentWeatherType[]>>;
-};
 
 const schema = yup.object({
   city: yup
@@ -65,8 +61,6 @@ export default function Form({
   onWeatherForecast,
 }: FormProps) {
   const [showPopup, setShowPopup] = useState<boolean>(false);
-  const [selectedCityByUser, setSelectedCityByUser] =
-    useState<SearchedCityType | null>(null);
   const [showCitySelection, setShowCitySelection] = useState<boolean>(false);
   const [searchedCitySelection, setSearchedCitySelection] = useState<
     SearchedCityType[]
@@ -74,8 +68,8 @@ export default function Form({
     {
       name: "",
       state: "",
-      lat: 1,
-      lon: 1,
+      lat: 0,
+      lon: 0,
     },
   ]);
   const searchInput = useRef() as MutableRefObject<HTMLInputElement>;
@@ -143,14 +137,12 @@ export default function Form({
         setShowCitySelection(true);
         clearErrors("city");
       })
-      .catch((err) => {
+      .catch(() => {
         setShowPopup(true);
-        console.error(err);
       });
   };
 
   function onCloseHandler() {
-    setSelectedCityByUser(null);
     setShowCitySelection(false);
   }
 
@@ -175,9 +167,8 @@ export default function Form({
           windSpeed: Math.round(response.wind.speed),
         });
       })
-      .catch((err) => {
+      .catch(() => {
         setShowPopup(true);
-        console.error(err);
       });
   }
 
@@ -204,14 +195,12 @@ export default function Form({
         );
         onWeatherForecast(fiveDayForecast);
       })
-      .catch((err) => {
+      .catch(() => {
         setShowPopup(true);
-        console.error(err);
       });
   }
 
   function onSelectedCityHandler(cityData: SearchedCityType) {
-    setSelectedCityByUser(cityData);
     setShowCitySelection(false);
 
     fetchCurrentWeatherData(cityData);

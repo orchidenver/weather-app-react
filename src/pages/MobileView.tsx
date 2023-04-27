@@ -1,13 +1,9 @@
 import { Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import sunnyMedium from "../assets/sunny-medium.svg";
-import { CurrentWeatherType } from "../types";
+import { MobileViewProps } from "../types";
 
-type MobileViewProps = {
-  currentCityData: CurrentWeatherType | null;
-};
-
-export default function MobileView(props: MobileViewProps) {
+export default function MobileView({ currentCityData }: MobileViewProps) {
   const theme = useTheme();
 
   return (
@@ -24,10 +20,10 @@ export default function MobileView(props: MobileViewProps) {
       }}
     >
       <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
-        {props?.currentCityData?.date}
+        {currentCityData?.date}
       </Typography>
       <Typography variant="h3" component="h3" sx={{ height: "15%" }}>
-        {props?.currentCityData?.city}
+        {currentCityData?.city}
       </Typography>
       <Typography
         variant="h3"
@@ -35,7 +31,7 @@ export default function MobileView(props: MobileViewProps) {
         mb={3}
         sx={{ height: "15%", fontSize: "4rem !important" }}
       >
-        {`${props?.currentCityData?.temp} °C`}
+        {`${currentCityData?.temp} °C`}
       </Typography>
       <img
         src={sunnyMedium}
@@ -53,7 +49,7 @@ export default function MobileView(props: MobileViewProps) {
           height: "15%",
         }}
       >
-        {props?.currentCityData?.weatherDescription}
+        {currentCityData?.weatherDescription}
       </Typography>
       <Typography
         variant="h4"
@@ -61,7 +57,7 @@ export default function MobileView(props: MobileViewProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Humidity: {props?.currentCityData?.humidity}%
+        Humidity: {currentCityData?.humidity}%
       </Typography>
       <Typography
         variant="h4"
@@ -69,7 +65,7 @@ export default function MobileView(props: MobileViewProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Wind speed: {props?.currentCityData?.windSpeed} m/sec
+        Wind speed: {currentCityData?.windSpeed} m/sec
       </Typography>
     </Stack>
   );

@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from "react";
+
 export type SearchedCityType = {
   name: string;
   state: string;
@@ -56,4 +58,13 @@ export type ChildrenProps = {
 
 export interface ScreenViewProps {
   cityWeather: CurrentWeatherType | null;
+}
+
+export interface MobileViewProps {
+  currentCityData: CurrentWeatherType | null;
+}
+
+export interface FormProps {
+  onWeatherChange: Dispatch<SetStateAction<CurrentWeatherType | null>>;
+  onWeatherForecast: Dispatch<SetStateAction<CurrentWeatherType[]>>;
 }

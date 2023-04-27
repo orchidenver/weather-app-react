@@ -16,6 +16,8 @@ import {
 import "swiper/css";
 import "./MainPage.css";
 
+const btnsData: string[] = ["2 days", "3 days", "5 days"];
+
 export default function MainPage() {
   const [selectedCityCurrentWeather, setSelectedCityCurrentWeather] =
     useState<CurrentWeatherType | null>({
@@ -192,33 +194,20 @@ export default function MainPage() {
           justifyContent="center"
           sx={{ width: "90%" }}
         >
-          <Button
-            variant="outlined"
-            color="secondary"
-            size={matchesMobileResolution ? "medium" : "small"}
-            sx={{ borderRadius: 2 }}
-            onClick={daysPerView}
-          >
-            2 days
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size={matchesMobileResolution ? "medium" : "small"}
-            sx={{ borderRadius: 2 }}
-            onClick={daysPerView}
-          >
-            3 days
-          </Button>
-          <Button
-            variant="outlined"
-            color="secondary"
-            size={matchesMobileResolution ? "medium" : "small"}
-            sx={{ borderRadius: 2 }}
-            onClick={daysPerView}
-          >
-            5 days
-          </Button>
+          {btnsData.map((label: string) => {
+            return (
+              <Button
+                key={label}
+                variant="outlined"
+                color="secondary"
+                size={matchesMobileResolution ? "medium" : "small"}
+                sx={{ borderRadius: 2 }}
+                onClick={daysPerView}
+              >
+                {label}
+              </Button>
+            );
+          })}
         </Stack>
         <Stack
           direction="row"
