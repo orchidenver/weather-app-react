@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Mousewheel } from "swiper";
 import { CurrentWeatherType, ButtonDaysPerViewEnum } from "../types";
 import MobileView from "./MobileView";
+import ScreenView from "./ScreenView";
 import Form from "../components/Form";
 import {
   selectWeatherImage,
@@ -15,9 +16,7 @@ import {
 import "swiper/css";
 import "./MainPage.css";
 
-export interface IAppProps {}
-
-export default function MainPage(props: IAppProps) {
+export default function MainPage() {
   const [selectedCityCurrentWeather, setSelectedCityCurrentWeather] =
     useState<CurrentWeatherType | null>({
       date: "Monday, 24/04/2023",
@@ -52,7 +51,7 @@ export default function MainPage(props: IAppProps) {
   );
 
   function daysPerView(e: MouseEvent<HTMLButtonElement>) {
-    const textValue: string | null = (e.target as HTMLElement)!.textContent;
+    const textValue: string | null = (e.target as HTMLElement).textContent;
     const daysPerView: number = +textValue!.split(" ")[0];
     setDaysPerViewForecast(daysPerView);
   }
@@ -105,70 +104,7 @@ export default function MainPage(props: IAppProps) {
           />
         </Stack>
         {matchesMobileResolution ? (
-          <Stack
-            direction="column"
-            justifyContent="start"
-            alignItems="start"
-            color={theme.palette.secondary.main}
-            sx={{
-              width: "100%",
-              height: "55%",
-              marginLeft: { lg: 30, xl: 20, md: 20, sm: 10 },
-              position: "relative",
-            }}
-          >
-            <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
-              {selectedCityCurrentWeather?.date}
-            </Typography>
-            <Typography
-              variant="h3"
-              component="h3"
-              sx={{ height: "15%", marginBottom: 1 }}
-            >
-              {selectedCityCurrentWeather?.city}
-            </Typography>
-            <Typography
-              variant="h3"
-              paragraph
-              mb={0}
-              sx={{ height: "15%", marginBottom: 1 }}
-            >
-              {`${selectedCityCurrentWeather?.temp} °C`}
-            </Typography>
-            <Typography
-              variant="h3"
-              paragraph
-              mb={3}
-              sx={{
-                height: "15%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                width: 190,
-              }}
-            >
-              {selectedCityCurrentWeather?.weatherDescription}
-            </Typography>
-            <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>
-              Humidity: {selectedCityCurrentWeather?.humidity}%
-            </Typography>
-            <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>
-              Wind speed: {selectedCityCurrentWeather?.windSpeed} m/sec
-            </Typography>
-            <img
-              src={selectWeatherImage(
-                selectedCityCurrentWeather?.weatherDescription
-              )}
-              alt={`${selectedCityCurrentWeather?.weatherDescription} weather`}
-              loading="lazy"
-              style={{
-                position: "absolute",
-                top: "3%",
-                right: "30%",
-                width: "25%",
-              }}
-            />
-          </Stack>
+          <ScreenView cityWeather={selectedCityCurrentWeather} />
         ) : (
           <MobileView currentCityData={selectedCityCurrentWeather} />
         )}

@@ -49,3 +49,11 @@ export enum ButtonDaysPerViewEnum {
   THREE = 3,
   FIVE = 5,
 }
+
+export type ChildrenProps = {
+  children: JSX.Element;
+};
+
+export interface ScreenViewProps {
+  cityWeather: CurrentWeatherType | null;
+}
