@@ -54,6 +54,22 @@ const theme = createTheme({
       },
     },
   },
+  components: {
+    MuiInputLabel: {
+      styleOverrides: {
+        shrink: {
+          "@media (max-width: 600px)": {
+            color: "#F2F0EB !important",
+          },
+          "@media (min-width: 600px)": {
+            fontSize: "#712B75 !important",
+          },
+          position: "absolute",
+          top: -7,
+        },
+      },
+    },
+  },
 });
 
 function App() {

@@ -9,7 +9,7 @@ export interface IAppProps {}
 export default function Page404(props: IAppProps) {
   const theme = useTheme();
 
-  const matches: boolean = useMediaQuery<string | undefined>(
+  const matchesMobileResolution: boolean = useMediaQuery<string | undefined>(
     theme.breakpoints.up("sm")
   );
 
@@ -27,7 +27,10 @@ export default function Page404(props: IAppProps) {
       <Typography variant="h1" style={{ color: "white" }}>
         404
       </Typography>
-      <Typography variant={matches ? "h2" : "h3"} style={{ color: "white" }}>
+      <Typography
+        variant={matchesMobileResolution ? "h2" : "h3"}
+        style={{ color: "white" }}
+      >
         Page not found
       </Typography>
     </Box>
