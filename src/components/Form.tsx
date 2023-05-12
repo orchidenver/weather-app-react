@@ -4,8 +4,6 @@ import {
   useRef,
   MutableRefObject,
   forwardRef,
-  Dispatch,
-  SetStateAction,
   useEffect,
 } from "react";
 import {
@@ -178,6 +176,7 @@ export default function Form({
     )
       .then((response) => response.json())
       .then((response) => {
+        console.log(response);
         const forecastId: number = response.city.id;
 
         const fiveDayForecast: CurrentWeatherType[] = response.list.map(
@@ -235,7 +234,6 @@ export default function Form({
       >
         <Autocomplete
           open={showCitySelection}
-          filterOptions={(x) => x}
           forcePopupIcon={false}
           loading={false}
           disablePortal={false}
@@ -260,6 +258,7 @@ export default function Form({
               inputProps={{
                 ...params.inputProps,
               }}
+              role="city-input"
             />
           )}
           renderOption={(props, option) => {
@@ -277,6 +276,7 @@ export default function Form({
                 cursor: "pointer",
                 color: theme.palette.primary.main,
               }}
+              role="clear-input"
               onClick={onCloseHandler}
             />
           }
@@ -292,6 +292,7 @@ export default function Form({
               ? theme.palette.error.light
               : theme.palette.error.main,
           }}
+          role="error-block"
         >
           {errors?.city?.message}
         </Typography>
