@@ -15,10 +15,33 @@ jest.mock("swiper", () => ({
   Mousewheel: (props: any) => null,
 }));
 
-test("renders learn react link", () => {
-  render(<App />);
-  const linkElement = screen.getByText(/2 days/i);
-  expect(linkElement).toBeInTheDocument();
+describe("App renders correctly", () => {
+  test("Mandatory App elements render correctly", () => {
+    render(<App />);
+    const input: HTMLInputElement = screen.getByRole("combobox", {
+      name: /city/i,
+    });
+    expect(input).toBeInTheDocument();
+
+    const cityNameElement: HTMLHeadingElement = screen.getByRole("heading", {
+      name: /odesa/i,
+    });
+    expect(cityNameElement).toBeInTheDocument();
+
+    ["2 days", "3 days", "5 days"].forEach((name: string) => {
+      const btn = screen.getByRole("button", { name });
+      expect(btn).toBeInTheDocument();
+    });
+  });
+
+  // test("Swiper and swiper elements render correctly", async () => {
+  //   render(<App />);
+
+  //   await waitFor(() => {
+  //     const swiperWeatherHourly = screen.getByTestId("swiper-weather-hourly");
+  //     const swiperWeatherDaily = screen.getByTestId("swiper-weather-daily");
+  //   });
+  // });
 });
 
 describe("App", () => {

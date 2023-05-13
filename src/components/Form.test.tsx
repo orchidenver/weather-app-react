@@ -30,10 +30,8 @@ describe("elements render", () => {
       />
     );
 
-    const formControl = screen.getByRole("city-input");
     const inputLabel = screen.getByLabelText("City");
     const searchInput = screen.getByRole("combobox", { name: "City" });
-    expect(formControl).toBeInTheDocument();
     expect(searchInput).toBeInTheDocument();
     expect(inputLabel).toBeInTheDocument();
     expect(searchInput).toBeEmptyDOMElement();
