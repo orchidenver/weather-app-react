@@ -64,12 +64,12 @@ export function filterForecastData(
 
   const data = forecastData
     ?.filter((today: CurrentWeatherType, i: number) => {
-      return +today.date * 1000 < endOfADay;
+      return parseInt(today.date * 1000 < endOfADay);
     })
     .map((el: CurrentWeatherType) => {
       return {
         ...el,
-        date: +el.date * 1000,
+        date: parseInt(el.date * 1000),
       };
     });
 
