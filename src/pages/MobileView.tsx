@@ -1,10 +1,9 @@
 import { Stack, Typography } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import sunnyMedium from "../assets/sunny-medium.svg";
+import { MobileViewProps } from "../types";
 
-export interface IAppProps {}
-
-export default function MobileView(props: IAppProps) {
+export default function MobileView({ currentCityData }: MobileViewProps) {
   const theme = useTheme();
 
   return (
@@ -21,10 +20,10 @@ export default function MobileView(props: IAppProps) {
       }}
     >
       <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
-        Monday, 10/04/2023
+        {currentCityData?.date}
       </Typography>
       <Typography variant="h3" component="h3" sx={{ height: "15%" }}>
-        Kyiv, Ukraine
+        {currentCityData?.city}
       </Typography>
       <Typography
         variant="h3"
@@ -32,7 +31,7 @@ export default function MobileView(props: IAppProps) {
         mb={3}
         sx={{ height: "15%", fontSize: "4rem !important" }}
       >
-        +7
+        {`${currentCityData?.temp} °C`}
       </Typography>
       <img
         src={sunnyMedium}
@@ -50,7 +49,7 @@ export default function MobileView(props: IAppProps) {
           height: "15%",
         }}
       >
-        Sunny
+        {currentCityData?.weatherDescription}
       </Typography>
       <Typography
         variant="h4"
@@ -58,7 +57,7 @@ export default function MobileView(props: IAppProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Humidity: 77%
+        Humidity: {currentCityData?.humidity}%
       </Typography>
       <Typography
         variant="h4"
@@ -66,7 +65,7 @@ export default function MobileView(props: IAppProps) {
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
       >
-        Wind speed: 5 m/sec
+        Wind speed: {currentCityData?.windSpeed} m/sec
       </Typography>
     </Stack>
   );
