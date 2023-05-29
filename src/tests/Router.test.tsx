@@ -15,8 +15,8 @@ jest.mock("swiper", () => ({
   Mousewheel: (props: any) => null,
 }));
 
-describe("Router test", () => {
-  test("MainPage test", () => {
+describe("Testing React Router", () => {
+  test("MainPage loads with correct path", () => {
     render(
       <MemoryRouter initialEntries={["/"]}>
         <Routes>
@@ -30,16 +30,19 @@ describe("Router test", () => {
     expect(cityNameElement).toBeInTheDocument();
 
     ["2 days", "3 days", "5 days"].forEach((name: string) => {
-      const btn = screen.getByRole("button", { name });
+      const btn: HTMLButtonElement = screen.getByRole("button", { name });
       expect(btn).toBeInTheDocument();
     });
 
-    const errorPageHeading = screen.queryByTestId("error-page-heading");
-    const errorPageText = screen.queryByTestId("error-page-text");
+    const errorPageHeading: HTMLElement | null =
+      screen.queryByTestId("error-page-heading");
+    const errorPageText: HTMLElement | null =
+      screen.queryByTestId("error-page-text");
     expect(errorPageHeading).not.toBeInTheDocument();
     expect(errorPageText).not.toBeInTheDocument();
   });
-  test("Page 404 test", () => {
+
+  test("Page 404 loads with correct path", () => {
     render(
       <MemoryRouter initialEntries={["/error"]}>
         <Routes>
@@ -47,8 +50,9 @@ describe("Router test", () => {
         </Routes>
       </MemoryRouter>
     );
-    const errorPageHeading = screen.getByTestId("error-page-heading");
-    const errorPageText = screen.getByTestId("error-page-text");
+    const errorPageHeading: HTMLElement =
+      screen.getByTestId("error-page-heading");
+    const errorPageText: HTMLElement = screen.getByTestId("error-page-text");
     const input: HTMLInputElement | null = screen.queryByRole("combobox", {
       name: /city/i,
     });

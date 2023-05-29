@@ -19,7 +19,13 @@ export default function ScreenView({ cityWeather }: ScreenViewProps) {
         position: "relative",
       }}
     >
-      <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
+      <Typography
+        variant="h6"
+        paragraph
+        mb={0}
+        sx={{ height: "15%" }}
+        data-testid="curDate"
+      >
         {cityWeather?.date}
       </Typography>
       <Typography
@@ -34,6 +40,7 @@ export default function ScreenView({ cityWeather }: ScreenViewProps) {
         paragraph
         mb={0}
         sx={{ height: "15%", marginBottom: 1 }}
+        data-testid="curTemp"
       >
         {`${cityWeather?.temp} °C`}
       </Typography>
@@ -48,10 +55,17 @@ export default function ScreenView({ cityWeather }: ScreenViewProps) {
           justifyContent: "space-between",
           width: 190,
         }}
+        data-testid="curDesc"
       >
         {cityWeather?.weatherDescription}
       </Typography>
-      <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>
+      <Typography
+        variant="h4"
+        paragraph
+        mb={0}
+        sx={{ height: "15%" }}
+        data-testid="curHumid"
+      >
         Humidity: {cityWeather?.humidity}%
       </Typography>
       <Typography variant="h4" paragraph mb={0} sx={{ height: "15%" }}>

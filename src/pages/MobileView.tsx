@@ -19,7 +19,13 @@ export default function MobileView({ currentCityData }: MobileViewProps) {
         marginBottom: 2,
       }}
     >
-      <Typography variant="h6" paragraph mb={0} sx={{ height: "15%" }}>
+      <Typography
+        variant="h6"
+        paragraph
+        mb={0}
+        sx={{ height: "15%" }}
+        data-testid="curDate"
+      >
         {currentCityData?.date}
       </Typography>
       <Typography variant="h3" component="h3" sx={{ height: "15%" }}>
@@ -30,6 +36,7 @@ export default function MobileView({ currentCityData }: MobileViewProps) {
         paragraph
         mb={3}
         sx={{ height: "15%", fontSize: "4rem !important" }}
+        data-testid="curTemp"
       >
         {`${currentCityData?.temp} °C`}
       </Typography>
@@ -48,6 +55,7 @@ export default function MobileView({ currentCityData }: MobileViewProps) {
         sx={{
           height: "15%",
         }}
+        data-testid="curDesc"
       >
         {currentCityData?.weatherDescription}
       </Typography>
@@ -56,6 +64,7 @@ export default function MobileView({ currentCityData }: MobileViewProps) {
         paragraph
         mb={0}
         sx={{ height: "15%", fontSize: "0.75rem !important" }}
+        data-testid="curHumid"
       >
         Humidity: {currentCityData?.humidity}%
       </Typography>

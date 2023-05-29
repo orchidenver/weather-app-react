@@ -38,7 +38,7 @@ import * as yup from "yup";
 const schema = yup.object({
   city: yup
     .string()
-    .required(" ")
+    .required("Please enter the city name")
     .test("regex test", `Numbers can't be in a city name`, (val) => {
       const regExp = /^[,a-zA-Z\s]+$/;
       return regExp.test(val as string);
@@ -176,7 +176,6 @@ export default function Form({
     )
       .then((response) => response.json())
       .then((response) => {
-        console.log(response);
         const forecastId: number = response.city.id;
 
         const fiveDayForecast: CurrentWeatherType[] = response.list.map(
@@ -236,9 +235,9 @@ export default function Form({
           open={showCitySelection}
           forcePopupIcon={false}
           loading={false}
-          disablePortal={false}
+          disablePortal={true}
           getOptionLabel={(option) => option.name}
-          id="city-search"
+          data-testid="city-search"
           options={searchedCitySelection}
           size="small"
           sx={{
@@ -257,6 +256,7 @@ export default function Form({
               label="City"
               inputProps={{
                 ...params.inputProps,
+                "aria-invalid": true,
               }}
               role="city-input"
             />
@@ -299,6 +299,7 @@ export default function Form({
       </FormControl>
       {showPopup ? (
         <Dialog
+          disablePortal={true}
           open={showPopup}
           TransitionComponent={Transition}
           keepMounted

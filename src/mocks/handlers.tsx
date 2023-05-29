@@ -30,15 +30,15 @@ const cities: SearchedCityTypeExtended[] = [
 
 const currentWeatherData = {
   coord: { lon: 30.7326, lat: 46.4775 },
-  weather: [{ id: 500, main: "Rain", description: "light rain", icon: "10d" }],
+  weather: [{ id: 500, main: "Sunny", description: "light rain", icon: "10d" }],
   base: "stations",
   main: {
-    temp: 11.2,
+    temp: 22.2,
     feels_like: 10.15,
     temp_min: 11.2,
     temp_max: 11.2,
     pressure: 1023,
-    humidity: 68,
+    humidity: 88,
     sea_level: 1023,
     grnd_level: 1016,
   },
@@ -50,7 +50,7 @@ const currentWeatherData = {
   sys: { country: "UA", sunrise: 1683599510, sunset: 1683652515 },
   timezone: 10800,
   id: 698740,
-  name: "Lviv",
+  name: "Odesa",
   cod: 200,
 };
 
