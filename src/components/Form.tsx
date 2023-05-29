@@ -80,9 +80,12 @@ export default function Form({
     reset,
     handleSubmit,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<yup.InferType<typeof schema>>({
     mode: "onTouched",
+    defaultValues: {
+      city: "",
+    },
     resolver: yupResolver(schema),
   });
 
@@ -294,7 +297,7 @@ export default function Form({
           }}
           role="error-block"
         >
-          {errors?.city?.message}
+          {!isDirty ? null : errors?.city?.message}
         </Typography>
       </FormControl>
       {showPopup ? (

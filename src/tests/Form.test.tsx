@@ -67,26 +67,6 @@ describe("Search input validation runs correctly", () => {
       screen.getByText(/numbers can't be in a city nam/i)
     ).toBeInTheDocument();
   });
-
-  test("Testing required field", async () => {
-    render(
-      <Form
-        onWeatherChange={setSelectedCityCurrentWeather}
-        onWeatherForecast={setSelectedCityByUserFiveDaysForecast}
-      />
-    );
-
-    const user = userEvent.setup();
-
-    expect(searchInput()).toBeInTheDocument();
-
-    await user.tab();
-    expect(searchInput()).toHaveFocus();
-
-    await user.tab();
-    expect(searchInput()).not.toHaveFocus();
-    expect(screen.getByText(/please enter the city name/i)).toBeInTheDocument();
-  });
 });
 
 function searchInput(): HTMLInputElement {
