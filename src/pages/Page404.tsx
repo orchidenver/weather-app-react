@@ -24,12 +24,17 @@ export default function Page404(props: IAppProps) {
         backgroundColor: theme.palette.primary.main,
       }}
     >
-      <Typography variant="h1" style={{ color: "white" }}>
+      <Typography
+        variant="h1"
+        style={{ color: "white" }}
+        data-testid="error-page-heading"
+      >
         404
       </Typography>
       <Typography
         variant={matchesMobileResolution ? "h2" : "h3"}
         style={{ color: "white" }}
+        data-testid="error-page-text"
       >
         Page not found
       </Typography>

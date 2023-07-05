@@ -4,8 +4,6 @@ import {
   useRef,
   MutableRefObject,
   forwardRef,
-  Dispatch,
-  SetStateAction,
   useEffect,
 } from "react";
 import {
@@ -40,7 +38,7 @@ import * as yup from "yup";
 const schema = yup.object({
   city: yup
     .string()
-    .required(" ")
+    .required("Please enter the city name")
     .test("regex test", `Numbers can't be in a city name`, (val) => {
       const regExp = /^[,a-zA-Z\s]+$/;
       return regExp.test(val as string);
@@ -82,9 +80,12 @@ export default function Form({
     reset,
     handleSubmit,
     clearErrors,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<yup.InferType<typeof schema>>({
     mode: "onTouched",
+    defaultValues: {
+      city: "",
+    },
     resolver: yupResolver(schema),
   });
 
@@ -235,12 +236,11 @@ export default function Form({
       >
         <Autocomplete
           open={showCitySelection}
-          filterOptions={(x) => x}
           forcePopupIcon={false}
           loading={false}
-          disablePortal={false}
+          disablePortal={true}
           getOptionLabel={(option) => option.name}
-          id="city-search"
+          data-testid="city-search"
           options={searchedCitySelection}
           size="small"
           sx={{
@@ -259,7 +259,9 @@ export default function Form({
               label="City"
               inputProps={{
                 ...params.inputProps,
+                "aria-invalid": true,
               }}
+              role="city-input"
             />
           )}
           renderOption={(props, option) => {
@@ -277,6 +279,7 @@ export default function Form({
                 cursor: "pointer",
                 color: theme.palette.primary.main,
               }}
+              role="clear-input"
               onClick={onCloseHandler}
             />
           }
@@ -292,12 +295,14 @@ export default function Form({
               ? theme.palette.error.light
               : theme.palette.error.main,
           }}
+          role="error-block"
         >
-          {errors?.city?.message}
+          {!isDirty ? null : errors?.city?.message}
         </Typography>
       </FormControl>
       {showPopup ? (
         <Dialog
+          disablePortal={true}
           open={showPopup}
           TransitionComponent={Transition}
           keepMounted

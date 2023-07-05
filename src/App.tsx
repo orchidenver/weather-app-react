@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ThemeComponent from "./theme";
-import Container from "@material-ui/core/Container";
-
+import Container from "@mui/material/Container";
 import { MainPage, Page404 } from "./pages";
 
 function App() {
